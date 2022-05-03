@@ -1,4 +1,4 @@
-=== double-title ===
+=== Double Title ===
 Contributors: wyzda2021
 Donate link: https://dev.ggdoc.cn
 Tags:双标题, 副标题, 标题, 自动设置, 文章双标题, double title
