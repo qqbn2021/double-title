@@ -425,7 +425,7 @@ class Double_Title_List
                 );
             } else if (!empty($_GET['ids']) && is_array($_GET['ids'])) {
                 // 删除多条记录
-                $ids = array_map('absint', rest_sanitize_array(wp_unslash($_GET['ids'])));
+                $ids = array_map('absint', array_values(wp_unslash($_GET['ids'])));
                 if (!empty($ids)) {
                     $sql = 'DELETE FROM `' . $table_name . '` WHERE `id` in (' . implode(', ', array_fill(0, count($ids), '%d')) . ')';
                     $query = call_user_func_array(array($wpdb, 'prepare'), array_merge(array($sql), $ids));
