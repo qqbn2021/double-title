@@ -298,7 +298,31 @@ class Double_Title_Page
                         'value' => '2'
                     )
                 ),
-                'form_desc' => '某些主题可能会自动添加网站名称，设置为是后，插件会在wp_title过滤器中添加网站名称'
+                'form_desc' => '某些插件或主题可能会自动添加网站名称，设置为是后，插件会在wp_title过滤器中添加网站名称'
+            )
+        );
+
+        add_settings_field(
+            'double_title_add_sep',
+            // 输入框说明文字
+            '添加分隔符',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'double_title_add_sep',
+                'form_type' => 'select',
+                'form_data' => array(
+                    array(
+                        'title' => '是',
+                        'value' => '1'
+                    ),
+                    array(
+                        'title' => '否',
+                        'value' => '2'
+                    )
+                ),
+                'form_desc' => '某些插件或主题可能会自动在标题和网站名称之间添加分隔符，设置为是后，插件会在wp_title过滤器中添加分隔符'
             )
         );
 

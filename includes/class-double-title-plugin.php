@@ -39,6 +39,7 @@ SQL;
             'double_title_len' => 0,
             'double_title_wp_title' => 2,
             'double_title_add_name' => 2,
+            'double_title_add_sep' => 2,
             'double_title_tab_title' => 1,
             'double_title_article_title' => 2,
             'double_title_auto_title' => 1
@@ -312,7 +313,11 @@ SQL;
         if (!empty($double_title_option['double_title_add_name'])) {
             $double_title_add_name = (int)$double_title_option['double_title_add_name'];
         }
-        return $title . $sep . ($double_title_add_name == 1 ? get_bloginfo('name') : '');
+        $double_title_add_sep = 2;
+        if (!empty($double_title_option['double_title_add_sep'])) {
+            $double_title_add_sep = (int)$double_title_option['double_title_add_sep'];
+        }
+        return $title . ($double_title_add_sep === 1 ? $sep : '') . ($double_title_add_name === 1 ? get_bloginfo('name') : '');
     }
 
     /**
