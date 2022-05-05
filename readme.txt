@@ -1,4 +1,4 @@
-=== Double Title ===
+=== 双标题 ===
 Contributors: wyzda2021
 Donate link: https://dev.ggdoc.cn
 Tags:双标题, 副标题, 标题, 自动设置, 文章双标题, double title
@@ -66,11 +66,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 == Screenshots ==
 
 1. 双标题设置
-2. 双标题列表
-3. 同步文章
-4. 同步标题
-5. 编辑或删除双标题
-6. 手动设置双标题
+2. 双标题设置
+3. 双标题列表
+4. 同步文章
+5. 同步标题
+6. 编辑或删除双标题
+7. 手动设置双标题
 
 == Upgrade Notice ==
 

@@ -83,7 +83,7 @@ class Double_Title_List
         ?>
         <div class="wrap">
             <h1 class="wp-heading-inline">同步标题</h1>
-            <p>如果文章还没有设置副标题，同步标题将会自动从接口数据中随机取出一条数据作为副标题。</p>
+            <p>如果文章还没有设置副标题，同步标题将会自动从接口数据中，按照相似度设置，取出一条数据作为副标题。</p>
             <p>
                 <a class="button button-secondary" href="javascript:void(0);" id="sync_title">开始同步</a>
             </p>

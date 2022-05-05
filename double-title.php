@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:Double Title
+ * Plugin Name:双标题
  * Plugin URI:https://dev.ggdoc.cn/plugin/2.html
  * Description:支持文章双标题显示，自定义双标题显示模板，支持手动或自动设置文章副标题。
  * Version:0.0.1
