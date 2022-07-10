@@ -306,45 +306,53 @@ class Double_Title_List
         if (!empty($options['double_title_cdkey'])) {
             $cdkey = $options['double_title_cdkey'];
         } else {
-            set_transient('double_title_error', '未设置授权码', 60);
-            return array();
+            $cdkey = '';
         }
-        $api_url = 'https://dev.ggdoc.cn/api/double_title/get';
-        $timeout = 30;
-        if (!empty($options['double_title_timeout'])) {
-            $timeout = (int)$options['double_title_timeout'];
-        }
-        $response = wp_remote_post($api_url, array(
-            'timeout' => $timeout,
-            'headers' => array(
-                'GGDEV-CDKEY' => $cdkey,
-                'GGDEV-ACTIVATE-DOMAIN' => $domain
-            ),
-            'body' => array(
-                'title' => $original_title
-            )
-        ));
-        if (is_wp_error($response)) {
-            set_transient('double_title_error', $response->get_error_message(), 60);
-            return array();
-        }
-        $code = (int)wp_remote_retrieve_response_code($response);
-        if ($code !== 200) {
-            set_transient('double_title_error', '接口返回状态码为：' . $code, 60);
-            return array();
-        }
-        $result = wp_remote_retrieve_body($response);
-        if (empty($result)) {
-            set_transient('double_title_error', '接口返回数据为空', 60);
-            return array();
-        }
-        $result_arr = json_decode($result, true);
-        if (empty($result_arr)) {
-            set_transient('double_title_error', '接口返回数据解析失败', 60);
-            return array();
-        }
-        if ($result_arr['status'] != 1) {
-            set_transient('double_title_error', $result_arr['msg'], 60);
+        // 从双标题接口获取数据
+        if (!empty($options['double_title_api'])){
+            $api_url = $options['double_title_api'];
+            $timeout = 30;
+            if (!empty($options['double_title_timeout'])) {
+                $timeout = (int)$options['double_title_timeout'];
+            }
+            $response = wp_remote_post($api_url, array(
+                'timeout' => $timeout,
+                'headers' => array(
+                    'GGDEV-CDKEY' => $cdkey,
+                    'GGDEV-ACTIVATE-DOMAIN' => $domain
+                ),
+                'body' => array(
+                    'title' => $original_title
+                )
+            ));
+            if (is_wp_error($response)) {
+                set_transient('double_title_error', $response->get_error_message(), 60);
+                return array();
+            }
+            $code = (int)wp_remote_retrieve_response_code($response);
+            if ($code !== 200) {
+                set_transient('double_title_error', '接口返回状态码为：' . $code, 60);
+                return array();
+            }
+            $result = wp_remote_retrieve_body($response);
+            if (empty($result)) {
+                set_transient('double_title_error', '接口返回数据为空', 60);
+                return array();
+            }
+            $result_arr = json_decode($result, true);
+            if (empty($result_arr)) {
+                set_transient('double_title_error', '接口返回数据解析失败', 60);
+                return array();
+            }
+            if ($result_arr['status'] != 1) {
+                set_transient('double_title_error', $result_arr['msg'], 60);
+                return array();
+            }
+        } else if (class_exists('Double_Title_Api')){
+            // 内置接口
+            $result_arr['data'] = Double_Title_Api::get($original_title);
+        } else {
+            set_transient('double_title_error', '未设置双标题接口地址或未购买商业版', 60);
             return array();
         }
         // 根据相似度排序

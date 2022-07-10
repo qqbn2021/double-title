@@ -1,11 +1,11 @@
 === 双标题 ===
 Contributors: wyzda2021
-Donate link: https://dev.ggdoc.cn
+Donate link: https://www.ggdoc.cn
 Tags:双标题, 副标题, 标题, 自动设置, 文章双标题, double title
 Requires at least: 5.0
 Requires PHP:5.3
-Tested up to: 5.9
-Stable tag: 0.0.1
+Tested up to: 6.0
+Stable tag: 0.0.2
 License: GNU General Public License v2.0 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 5、支持手动编辑或删除文章副标题。
 
 6、支持修改title标签内容为双标题，让搜索引擎抓取到文章的双标题。同时还支持是否在文章列表或详情页面显示双标题，保持页面文章可读性。
+
+7、支持自定义双标题接口。
 
 == Installation ==
 
@@ -62,6 +64,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 = 为什么双标题插件无法正常使用？ =
 如果您装的其它插件或者主题对标题也进行了处理，则双标题插件很有可能无法正常运行。
 
+= 联系作者 =
+如果插件使用出现了问题，或者想要定制功能，可以加QQ：1445023846。
+
 
 == Screenshots ==
 
@@ -75,10 +80,16 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Upgrade Notice ==
 
+= 0.0.2 =
+新增自定义双标题接口设置
+
 = 0.0.1 =
 参考Changelog说明
 
 == Changelog ==
+
+= 0.0.2 =
+* 新增自定义双标题接口设置
 
 = 0.0.1 =
 * 新增双标题列表，可以查看原标题与副标题的内容

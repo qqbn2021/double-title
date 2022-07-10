@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name:双标题
- * Plugin URI:https://dev.ggdoc.cn/plugin/2.html
+ * Plugin URI:https://www.ggdoc.cn/plugin/2.html
  * Description:支持文章双标题显示，自定义双标题显示模板，支持手动或自动设置文章副标题。
- * Version:0.0.1
+ * Version:0.0.2
  * Requires at least: 5.0
  * Requires PHP:5.3
  * Author:果果开发
- * Author URI:https://dev.ggdoc.cn
+ * Author URI:https://www.ggdoc.cn
  * License:GPL v2 or later
  */
 
@@ -15,6 +15,12 @@
 if (!function_exists('add_action')) {
     http_response_code(404);
     exit;
+}
+
+if (defined('DOUBLE_TITLE_PLUGIN_DIR')) {
+    // 在我的插件那添加重名插件说明
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), array('Double_Title_Plugin', 'duplicate_name'));
+    return;
 }
 
 // 插件目录后面有 /

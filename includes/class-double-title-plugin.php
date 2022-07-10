@@ -64,6 +64,9 @@ SQL;
      */
     public static function link_double_title($links)
     {
+        $business_link = '<a href="https://www.ggdoc.cn/plugin/2.html" target="_blank">商业版</a>';
+        array_unshift($links, $business_link);
+
         $settings_link = '<a href="admin.php?page=double-title-setting">设置</a>';
         array_unshift($links, $settings_link);
 
@@ -284,7 +287,7 @@ SQL;
     public static function change_title($title, $id)
     {
         global $double_title_option;
-        if (!empty($double_title_option['double_title_cdkey']) && !empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
+        if (!empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
             $tmp = self::get_subtitle($id);
             if (!empty($tmp)) {
                 $title = $tmp;
@@ -303,7 +306,7 @@ SQL;
     {
         global $double_title_option;
         $id = get_the_ID();
-        if (!empty($id) && !empty($double_title_option['double_title_cdkey']) && !empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
+        if (!empty($id) && !empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
             $tmp = self::get_subtitle($id);
             if (!empty($tmp)) {
                 $title = $tmp;
@@ -472,12 +475,27 @@ SQL;
     {
         global $double_title_option;
         $id = get_the_ID();
-        if (!empty($id) && !empty($double_title_option['double_title_cdkey']) && !empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
+        if (!empty($id) && !empty($double_title_option['double_title_template']) && get_post_type($id) === 'post') {
             $title = self::get_subtitle($id);
             if (!empty($title)) {
                 $title_parts_array['title'] = $title;
             }
         }
         return $title_parts_array;
+    }
+
+    /**
+     * 在插件页面添加同名插件处理问题
+     *
+     * @param $links
+     *
+     * @return mixed
+     */
+    public static function duplicate_name($links)
+    {
+        $settings_link = '<a href="https://www.ggdoc.cn/plugin/2.html" target="_blank">请删除其它版本《双标题》插件</a>';
+        array_unshift($links, $settings_link);
+
+        return $links;
     }
 }

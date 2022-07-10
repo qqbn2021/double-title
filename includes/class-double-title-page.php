@@ -13,8 +13,8 @@ class Double_Title_Page
 
         add_settings_section(
             'double_title_page_section',
-            '授权码说明',
-            array('Double_Title_Page', 'double_title_page_callback'),
+            null,
+            null,
             'double_title_page'
         );
 
@@ -82,6 +82,21 @@ class Double_Title_Page
                 'form_type' => 'input',
                 'type' => 'number',
                 'form_desc' => '请求超时时间，默认为30秒'
+            )
+        );
+
+        add_settings_field(
+            'double_title_api',
+            // 输入框说明文字
+            '双标题接口地址',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'double_title_api',
+                'form_type' => 'input',
+                'type' => 'url',
+                'form_desc' => '双标题接口请求地址，填写后将从此接口地址获取双标题数据'
             )
         );
 
@@ -340,16 +355,5 @@ class Double_Title_Page
                 'form_desc' => '某些插件或主题拥有较高的执行优先级，可以通过设置优先级增加双标题成功率'
             )
         );
-    }
-
-    /**
-     * 授权码文字说明
-     * @return void
-     */
-    public static function double_title_page_callback()
-    {
-        ?>
-        如果您还没有购买授权码，请点击此链接去购买：<a href="https://dev.ggdoc.cn/plugin/2.html" target="_blank">https://dev.ggdoc.cn/plugin/2.html</a>。
-        <?php
     }
 }
