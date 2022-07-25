@@ -18,112 +18,15 @@ class Double_Title_Page
             'double_title_page'
         );
 
-        // 在新的设置页面添加表单输入框
         add_settings_field(
-            'double_title_menu_position',
+            'template',
             // 输入框说明文字
-            '菜单显示位置',
+            '文章显示模板',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_menu_position',
-                'form_type' => 'select',
-                'form_data' => array(
-                    array(
-                        'title' => '文章',
-                        'value' => '5'
-                    ),
-                    array(
-                        'title' => '媒体',
-                        'value' => '10'
-                    ),
-                    array(
-                        'title' => '页面',
-                        'value' => '20'
-                    ),
-                    array(
-                        'title' => '评论',
-                        'value' => '25'
-                    ),
-                    array(
-                        'title' => '插件',
-                        'value' => '65'
-                    ),
-                    array(
-                        'title' => '用户',
-                        'value' => '70'
-                    ),
-                    array(
-                        'title' => '工具',
-                        'value' => '75'
-                    ),
-                    array(
-                        'title' => '设置',
-                        'value' => '80'
-                    ),
-                    array(
-                        'title' => '默认',
-                        'value' => '100'
-                    )
-                )
-            )
-        );
-
-        add_settings_field(
-            'double_title_timeout',
-            // 输入框说明文字
-            '请求超时时间',
-            array('Double_Title_Plugin', 'double_title_field_callback'),
-            'double_title_page',
-            'double_title_page_section',
-            array(
-                'label_for' => 'double_title_timeout',
-                'form_type' => 'input',
-                'type' => 'number',
-                'form_desc' => '请求超时时间，默认为30秒'
-            )
-        );
-
-        add_settings_field(
-            'double_title_api',
-            // 输入框说明文字
-            '双标题接口地址',
-            array('Double_Title_Plugin', 'double_title_field_callback'),
-            'double_title_page',
-            'double_title_page_section',
-            array(
-                'label_for' => 'double_title_api',
-                'form_type' => 'input',
-                'type' => 'url',
-                'form_desc' => '双标题接口请求地址，填写后将从此接口地址获取双标题数据'
-            )
-        );
-
-        add_settings_field(
-            'double_title_cdkey',
-            // 输入框说明文字
-            '授权码',
-            array('Double_Title_Plugin', 'double_title_field_callback'),
-            'double_title_page',
-            'double_title_page_section',
-            array(
-                'label_for' => 'double_title_cdkey',
-                'form_type' => 'input',
-                'type' => 'text',
-                'form_desc' => '授权码为32位字符串'
-            )
-        );
-
-        add_settings_field(
-            'double_title_template',
-            // 输入框说明文字
-            '双标题模板',
-            array('Double_Title_Plugin', 'double_title_field_callback'),
-            'double_title_page',
-            'double_title_page_section',
-            array(
-                'label_for' => 'double_title_template',
+                'label_for' => 'template',
                 'form_type' => 'input',
                 'type' => 'text',
                 'form_desc' => '原标题使用{原标题}，副标题使用{副标题}。例如：{原标题}（{副标题}）'
@@ -131,62 +34,29 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_mode',
+            'generate_template',
             // 输入框说明文字
-            '生成模式',
+            '文章生成模板',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_mode',
-                'form_type' => 'select',
-                'form_data' => array(
-                    array(
-                        'title' => '手动生成',
-                        'value' => '1'
-                    ),
-                    array(
-                        'title' => '自动生成',
-                        'value' => '2'
-                    )
-                ),
-                'form_desc' => '手动生成需要自己手动从接口数据中选择一个副标题，而自动生成则会自动从接口数据中选择一个副标题'
+                'label_for' => 'generate_template',
+                'form_type' => 'input',
+                'type' => 'text',
+                'form_desc' => '原标题使用{原标题}，副标题使用{副标题}。例如：{原标题}（{副标题}）'
             )
         );
 
         add_settings_field(
-            'double_title_auto_title',
-            // 输入框说明文字
-            '从原标题匹配副标题',
-            array('Double_Title_Plugin', 'double_title_field_callback'),
-            'double_title_page',
-            'double_title_page_section',
-            array(
-                'label_for' => 'double_title_auto_title',
-                'form_type' => 'select',
-                'form_data' => array(
-                    array(
-                        'title' => '是',
-                        'value' => '1'
-                    ),
-                    array(
-                        'title' => '否',
-                        'value' => '2'
-                    )
-                ),
-                'form_desc' => '如果您的文章原标题本来就是双标题，可以通过此功能自动匹配到副标题'
-            )
-        );
-
-        add_settings_field(
-            'double_title_similar',
+            'similar',
             // 输入框说明文字
             '相似度',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_similar',
+                'label_for' => 'similar',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -202,19 +72,19 @@ class Double_Title_Page
                         'value' => '3'
                     )
                 ),
-                'form_desc' => '原标题和副标题的相似度，自动生成模式将按照相似度设置来自动提取副标题'
+                'form_desc' => '原标题和副标题的相似度，按照相似度设置来自动提取副标题'
             )
         );
 
         add_settings_field(
-            'double_title_len',
+            'len',
             // 输入框说明文字
             '原标题最大长度',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_len',
+                'label_for' => 'len',
                 'form_type' => 'input',
                 'type' => 'number',
                 'form_desc' => '当原标题超过最大长度后，此文章不使用双标题。设置为0则不限制最大长度'
@@ -222,14 +92,14 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_tab_title',
+            'tab_title',
             // 输入框说明文字
             '启用标签栏上的双标题',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_tab_title',
+                'label_for' => 'tab_title',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -246,14 +116,14 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_article_title',
+            'article_title',
             // 输入框说明文字
             '启用页面上的双标题',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_article_title',
+                'label_for' => 'article_title',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -270,14 +140,38 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_wp_title',
+            'pre_generate',
+            // 输入框说明文字
+            '预生成双标题',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'pre_generate',
+                'form_type' => 'select',
+                'form_data' => array(
+                    array(
+                        'title' => '是',
+                        'value' => '1'
+                    ),
+                    array(
+                        'title' => '否',
+                        'value' => '2'
+                    )
+                ),
+                'form_desc' => '当文章显示时，生成双标题'
+            )
+        );
+
+        add_settings_field(
+            'wp_title',
             // 输入框说明文字
             '启用wp_title过滤器',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_wp_title',
+                'label_for' => 'wp_title',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -294,14 +188,14 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_add_name',
+            'add_name',
             // 输入框说明文字
             '添加网站名称',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_add_name',
+                'label_for' => 'add_name',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -318,14 +212,14 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_add_sep',
+            'add_sep',
             // 输入框说明文字
             '添加分隔符',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_add_sep',
+                'label_for' => 'add_sep',
                 'form_type' => 'select',
                 'form_data' => array(
                     array(
@@ -342,17 +236,75 @@ class Double_Title_Page
         );
 
         add_settings_field(
-            'double_title_priority',
+            'priority',
             // 输入框说明文字
             '插件优先级',
             array('Double_Title_Plugin', 'double_title_field_callback'),
             'double_title_page',
             'double_title_page_section',
             array(
-                'label_for' => 'double_title_priority',
+                'label_for' => 'priority',
                 'form_type' => 'input',
                 'type' => 'number',
-                'form_desc' => '某些插件或主题拥有较高的执行优先级，可以通过设置优先级增加双标题成功率'
+                'form_desc' => '某些插件或主题拥有较高的执行优先级，可以通过设置优先级增加双标题显示成功率'
+            )
+        );
+
+        add_settings_field(
+            'timeout',
+            // 输入框说明文字
+            '请求超时时间',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'timeout',
+                'form_type' => 'input',
+                'type' => 'number',
+                'form_desc' => '请求超时时间，默认为30秒'
+            )
+        );
+
+        add_settings_field(
+            'source',
+            // 输入框说明文字
+            '数据来源',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'source',
+                'form_type' => 'checkbox',
+                'form_data' => array(
+                    array(
+                        'title' => '百度',
+                        'value' => '1'
+                    )
+                )
+            )
+        );
+
+        add_settings_field(
+            'delete_btn',
+            // 输入框说明文字
+            '显示双标题重置按钮',
+            array('Double_Title_Plugin', 'double_title_field_callback'),
+            'double_title_page',
+            'double_title_page_section',
+            array(
+                'label_for' => 'delete_btn',
+                'form_type' => 'select',
+                'form_data' => array(
+                    array(
+                        'title' => '是',
+                        'value' => '1'
+                    ),
+                    array(
+                        'title' => '否',
+                        'value' => '2'
+                    )
+                ),
+                'form_desc' => '开启后，将会在后台文章列表页面显示双标题重置按钮'
             )
         );
     }
