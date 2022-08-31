@@ -14,25 +14,7 @@ class Double_Title_Api
         $title = mb_substr(strip_tags($title), 0, 50, 'utf-8');
         $list = array();
         if (!empty($title)) {
-            global $double_title_options;
-            $num = 10;
-            // 从搜索引擎获取
-            if (!empty($double_title_options['source'])) {
-                $sources = $double_title_options['source'];
-                shuffle($sources);
-            } else {
-                return $list;
-            }
-            foreach ($sources as $source) {
-                $tmp = self::getTitlesBySource($title, $source);
-                if (!empty($tmp)) {
-                    $list = array_unique(array_merge($list, $tmp));
-                    if (count($list) > $num) {
-                        break;
-                    }
-                }
-            }
-            $list = array_slice($list, 0, $num);
+            $list = self::getTitlesBySource($title, 1);
         }
         return $list;
     }

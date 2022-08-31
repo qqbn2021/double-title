@@ -15,14 +15,10 @@ class Double_Title_Plugin
             'priority' => 10,
             'similar' => 1,
             'len' => 0,
-            'wp_title' => 2,
-            'add_name' => 2,
-            'add_sep' => 2,
+            'wp_title_parts' => 2,
             'tab_title' => 1,
             'pre_generate' => 2,
-            'delete_btn' => 1,
-            'article_title' => 2,
-            'source' => array(1)
+            'article_title' => 2
         ));
     }
 
@@ -175,17 +171,6 @@ class Double_Title_Plugin
         if (!current_user_can('manage_options')) {
             return;
         }
-        if (!empty($_GET['post_id'])) {
-            $post_id = intval($_GET['post_id']);
-            delete_post_meta($post_id, 'double_title_original_title');
-            delete_post_meta($post_id, 'double_title_subtitle');
-            add_settings_error('double_titles', 'double_title_message', '重置双标题成功。', 'updated');
-            // 显示错误/更新信息
-            settings_errors('double_titles');
-            $location = $_SERVER['HTTP_REFERER'];
-            echo '<script>location.href="' . esc_url($location) . '";</script>';
-            exit();
-        }
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -210,41 +195,47 @@ class Double_Title_Plugin
      */
     public static function change_title($title, $id)
     {
-        global $double_title_options;
-        if (!empty($double_title_options['template']) && get_post_type($id) === 'post') {
-            $tmp = self::get_double_title($id, $title);
-            if (!empty($tmp)) {
-                $title = $tmp;
+        if (self::check_term_ids()) {
+            if (get_post_type($id) === 'post') {
+                $tmp = self::get_double_title($id, $title);
+                if (!empty($tmp)) {
+                    $title = $tmp;
+                }
             }
         }
         return $title;
     }
 
     /**
-     * wp_title过滤器
-     * @param string $title
-     * @param string $sep
-     * @return string
+     * wp_title_parts过滤器
+     * @param array $title_array
+     * @return array
      */
-    public static function wp_title($title, $sep)
+    public static function wp_title_parts($title_array)
     {
-        global $double_title_options;
-        $id = get_the_ID();
-        if (!empty($id) && !empty($double_title_options['template']) && get_post_type($id) === 'post') {
-            $tmp = self::get_double_title($id, $title);
-            if (!empty($tmp)) {
-                $title = $tmp;
+        if (!is_home() && self::check_term_ids() && !empty($title_array)) {
+            $id = get_the_ID();
+            if (!empty($id) && get_post_type($id) === 'post') {
+                if (1 == count($title_array)) {
+                    $tmp = self::get_double_title($id, $title_array[0]);
+                    if (!empty($tmp)) {
+                        $title_array[0] = $tmp;
+                    }
+                } else {
+                    $blog_name = get_bloginfo('name');
+                    foreach ($title_array as $k => $title) {
+                        if ($title === $blog_name) {
+                            continue;
+                        }
+                        $tmp = self::get_double_title($id, $title);
+                        if (!empty($tmp)) {
+                            $title_array[$k] = $tmp;
+                        }
+                    }
+                }
             }
         }
-        $double_title_add_name = 2;
-        if (!empty($double_title_options['add_name'])) {
-            $double_title_add_name = (int)$double_title_options['add_name'];
-        }
-        $double_title_add_sep = 2;
-        if (!empty($double_title_options['add_sep'])) {
-            $double_title_add_sep = (int)$double_title_options['add_sep'];
-        }
-        return $title . ($double_title_add_sep === 1 ? $sep : '') . ($double_title_add_name === 1 ? get_bloginfo('name') : '');
+        return $title_array;
     }
 
     /**
@@ -280,30 +271,44 @@ class Double_Title_Plugin
      */
     public static function change_document_title($title_parts_array)
     {
-        global $double_title_options;
-        $id = get_the_ID();
-        if (!empty($id) && !empty($double_title_options['template']) && get_post_type($id) === 'post') {
-            $title = self::get_double_title($id, $title_parts_array['title']);
-            if (!empty($title)) {
-                $title_parts_array['title'] = $title;
+        if (!is_home() && self::check_term_ids()) {
+            $id = get_the_ID();
+            if (!empty($id) && get_post_type($id) === 'post') {
+                $title = self::get_double_title($id, $title_parts_array['title']);
+                if (!empty($title)) {
+                    $title_parts_array['title'] = $title;
+                }
             }
         }
         return $title_parts_array;
     }
 
     /**
-     * 在插件页面添加同名插件处理问题
-     *
-     * @param $links
-     *
-     * @return mixed
+     * 检查当前文章分类是否允许使用双标题
+     * @return bool
      */
-    public static function duplicate_name($links)
+    public static function check_term_ids()
     {
-        $settings_link = '<a href="https://www.ggdoc.cn/plugin/2.html" target="_blank">请删除其它版本《双标题》插件</a>';
-        array_unshift($links, $settings_link);
-
-        return $links;
+        $check_term_ids = array();
+        $categorys = get_the_category();
+        if (!empty($categorys)) {
+            foreach ($categorys as $category) {
+                $check_term_ids[] = $category->term_id;
+            }
+        }
+        if (!empty($check_term_ids)) {
+            global $double_title_options;
+            // 启用分类
+            $term_ids = array();
+            if (!empty($double_title_options['term_ids'])) {
+                $term_ids = $double_title_options['term_ids'];
+            }
+            if (!empty($term_ids)) {
+                $result = array_intersect($check_term_ids, $term_ids);
+                return !empty($result);
+            }
+        }
+        return true;
     }
 
     /**
@@ -326,12 +331,20 @@ class Double_Title_Plugin
         $original_title = get_post_meta($post_id, 'double_title_original_title', true);
         // 没有副标题，或者原标题修改了
         if (empty($subtitle) || $subtitle !== $original_title) {
+            // 从当前模板匹配
+            $auto_result = self::get_auto_title($post_title, $double_title_options['template']);
+            if (!empty($auto_result['subtitle'])) {
+                $post_title = $auto_result['original_title'];
+                $subtitle = $auto_result['subtitle'];
+            }
             // 是否从原标题自动匹配副标题
-            if (!empty($double_title_options['generate_template'])) {
-                $auto_result = self::get_auto_title($post_title, $double_title_options['generate_template']);
-                if (!empty($auto_result['subtitle'])) {
-                    $post_title = $auto_result['original_title'];
-                    $subtitle = $auto_result['subtitle'];
+            if (empty($subtitle)) {
+                if (!empty($double_title_options['generate_template'])) {
+                    $auto_result = self::get_auto_title($post_title, $double_title_options['generate_template']);
+                    if (!empty($auto_result['subtitle'])) {
+                        $post_title = $auto_result['original_title'];
+                        $subtitle = $auto_result['subtitle'];
+                    }
                 }
             }
             // 从接口获取数据
@@ -367,6 +380,32 @@ class Double_Title_Plugin
         if (empty($subtitles)) {
             return '';
         }
+        // 按照相似度排序
+        $similar = array();
+        $data = array();
+        foreach ($subtitles as $k => $v) {
+            // 如果标题重复，则去掉
+            if ($post_title === $v) {
+                continue;
+            }
+            $percent = similar_text($post_title, $v);
+            $data[$k] = array(
+                'value' => $v,
+                'similar' => $percent
+            );
+            $similar[$k] = $percent;
+        }
+        if (array_multisort($similar, SORT_ASC, $data)) {
+            if (function_exists('array_column')) {
+                $subtitles = array_column($data, 'value');
+            } else {
+                $tmp = array();
+                foreach ($data as $v) {
+                    $tmp[] = $v['value'];
+                }
+                $subtitles = $tmp;
+            }
+        }
         $double_title_similar = 1;
         if (!empty($double_title_options['similar'])) {
             $double_title_similar = $double_title_options['similar'];
@@ -384,42 +423,141 @@ class Double_Title_Plugin
     }
 
     /**
-     * 后台文章列表显示双标题删除按钮
-     * @param array $columns
-     * @return array
-     */
-    public static function manage_post_posts_columns($columns)
-    {
-        return array_merge($columns, array('double_title' => '双标题'));
-    }
-
-    /**
-     * 后台文章列表显示双标题删除按钮
-     * @param string $column_key
-     * @param int $post_id
-     * @return void
-     */
-    public static function manage_post_posts_custom_column($column_key, $post_id)
-    {
-        if ($column_key == 'double_title') {
-            $subtitle = get_post_meta($post_id, 'double_title_subtitle', true);
-            if (!empty($subtitle)) {
-                echo '<a href="options-general.php?page=double-title-setting&post_id=' . esc_attr($post_id) . '" title="重置双标题">重置</a>';
-            } else {
-                echo '<span style="color:red;">未生成</span>';
-            }
-        }
-    }
-
-    /**
      * 如果文章没有双标题，则生成双标题
      * @return void
      */
     public static function the_post()
     {
         global $post;
-        if ($post->post_status === 'publish') {
+        if ($post->post_status === 'publish' && get_post_type($post->ID) === 'post' && self::check_term_ids()) {
             self::get_double_title($post->ID, $post->post_title);
         }
+    }
+
+    /**
+     * 引入sweetalert2弹窗组件
+     * @return void
+     */
+    public static function wp_enqueue_scripts()
+    {
+        if (!empty($_GET['page']) && 'double-title-setting' === $_GET['page']) {
+            // 添加静态文件
+            // 添加同步文章js文件
+            wp_enqueue_script(
+                'double-title',
+                plugins_url('/js/sweetalert2.min.js', DOUBLE_TITLE_PLUGIN_FILE),
+                array(),
+                '0.0.4',
+                true
+            );
+            wp_enqueue_script(
+                'double-title-sync',
+                plugins_url('/js/sync.min.js', DOUBLE_TITLE_PLUGIN_FILE),
+                array('jquery'),
+                '0.0.4',
+                true
+            );
+            wp_localize_script(
+                'double-title-sync',
+                'double_title_obj',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('double_title'),
+                )
+            );
+        }
+    }
+
+    /**
+     * 批量生成双标题
+     * @return void
+     */
+    public static function wp_ajax_sync_post()
+    {
+        check_ajax_referer('double_title');
+        global $double_title_options;
+        // 1 获取总数信息 2 开始预生成标题
+        $type = 1;
+        if (!empty($_REQUEST['double_type'])) {
+            $type = (int)$_REQUEST['double_type'];
+        }
+        $args = array(
+            'post_type' => 'post',
+            'post_status' => 'publish',
+            'orderby' => 'ID',
+            'order' => 'DESC',
+            'posts_per_page' => 1
+        );
+        if (!empty($double_title_options['term_ids'])) {
+            $args['category__in'] = $double_title_options['term_ids'];
+        }
+        $double_end_id = 0;
+        $total = 0;
+        $has_more = true;
+        $post_title = '';
+        $post_id = '';
+        wp_reset_postdata();
+        if (1 == $type) {
+            $the_query = new WP_Query($args);
+            $total = $the_query->found_posts;
+            if ($the_query->have_posts()) {
+                while ($the_query->have_posts()) {
+                    $the_query->the_post();
+                    $post_id = $the_query->post->ID;
+                    $double_end_id = $the_query->post->ID + 1;
+                }
+            } else {
+                $has_more = false;
+            }
+        } else {
+            if (!empty($_REQUEST['double_end_id'])) {
+                $double_end_id = (int)$_REQUEST['double_end_id'];
+            }
+            if ($double_end_id <= 0) {
+                $has_more = false;
+            } else {
+                $filter_handler = function ($where) use ($double_end_id) {
+                    global $wpdb;
+                    return $where . $wpdb->prepare(' AND `' . $wpdb->posts . '`.`ID` < %d', $double_end_id);
+                };
+                add_filter('posts_where', $filter_handler);
+                $the_query = new WP_Query($args);
+                $total = $the_query->found_posts;
+                if ($the_query->have_posts()) {
+                    while ($the_query->have_posts()) {
+                        $the_query->the_post();
+                        $post_id = $the_query->post->ID;
+                        $double_end_id = $post_id;
+                        $post_title = self::get_double_title($post_id, $the_query->post->post_title);
+                    }
+                } else {
+                    $has_more = false;
+                }
+                remove_filter('posts_where', $filter_handler);
+            }
+        }
+        wp_reset_postdata();
+        wp_send_json(array(
+            'end_id' => $double_end_id,
+            'total' => $total,
+            'has_more' => $has_more,
+            'post_title' => $post_title,
+            'post_id' => $post_id,
+        ));
+    }
+
+    /**
+     * 删除文章双标题
+     * @return void
+     */
+    public static function wp_ajax_delete_post()
+    {
+        check_ajax_referer('double_title');
+        delete_metadata('post', 0, 'double_title_original_title', '', true);
+        delete_metadata('post', 0, 'double_title_subtitle', '', true);
+        wp_send_json(array(
+            'status' => 1,
+            'msg' => '成功'
+        ));
     }
 }
